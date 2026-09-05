@@ -8,4 +8,4 @@ Open `index.html` in a browser, or visit the live site (see GitHub Pages link be
 
 ## Live site
 
-https://bensolis.github.io/Loksmith/
+https://bensolis.github.io/loksmith/
