@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Loksmith</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Karla:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
@@ -142,7 +147,7 @@
     padding:11px 13px;
     color:var(--text);
     font-family:var(--font-mono);
-    font-size:14.5px;
+    font-size:16px;
     outline:none;
     transition:border-color 0.15s ease, box-shadow 0.15s ease;
   }
@@ -389,7 +394,9 @@
     color:var(--text-dim);
     cursor:pointer;
     display:flex;
-    padding:6px;
+    align-items:center;
+    justify-content:center;
+    padding:10px;
   }
   .mask-btn:hover{color:var(--text-muted);}
   .mask-btn svg{width:16px;height:16px;}
@@ -484,7 +491,7 @@
     padding:11px 13px;
     color:var(--text);
     font-family:var(--font-mono);
-    font-size:14.5px;
+    font-size:16px;
     outline:none;
     cursor:pointer;
     transition:border-color 0.15s ease, box-shadow 0.15s ease;
@@ -559,6 +566,8 @@
   }
   .output-text.reveal{animation:flicker 0.4s ease-out;}
 </style>
+</head>
+<body>
 
 <div class="page">
   <div class="panel">
@@ -1415,3 +1424,5 @@
   }
 })();
 </script>
+</body>
+</html>
