@@ -1,0 +1,1417 @@
+<title>Loksmith</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Karla:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --void:#0b0f17;
+    --vault:#141b29;
+    --vault-recess:#0d1220;
+    --seam:#2a3547;
+    --seam-light:#3a4760;
+    --rust:#c1662c;
+    --rust-bright:#dd8a4f;
+    --text:#e9e6dc;
+    --text-muted:#8b93a3;
+    --text-dim:#5b6478;
+    --success:#6fbf8b;
+    --warn:#e0654a;
+    --font-display:'Sora','Segoe UI',system-ui,sans-serif;
+    --font-body:'Karla','Segoe UI',system-ui,sans-serif;
+    --font-mono:'IBM Plex Mono','SFMono-Regular',Consolas,'Liberation Mono',monospace;
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  [hidden]{display:none!important;}
+
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 50% -10%, rgba(193,102,44,0.07), transparent 60%),
+      var(--void);
+    color:var(--text);
+    font-family:var(--font-body);
+    min-height:100vh;
+    padding:40px 20px;
+  }
+
+  .page{
+    width:100%;
+    max-width:600px;
+    margin:0 auto;
+  }
+
+  .panel{
+    background:var(--vault);
+    border:1px solid var(--seam);
+    border-radius:16px;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.05) inset,
+      0 40px 80px -30px rgba(0,0,0,0.7);
+    overflow:hidden;
+    position:relative;
+  }
+
+  .panel::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0;
+    height:3px;
+    background:linear-gradient(90deg, transparent, var(--rust) 20%, var(--rust-bright) 50%, var(--rust) 80%, transparent);
+    opacity:0.85;
+  }
+
+  .panel-header{
+    padding:34px 34px 22px;
+    position:relative;
+  }
+
+  .logo-row{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    margin-bottom:16px;
+  }
+  .logo-icon{
+    height:42px;
+    width:auto;
+    display:block;
+    flex-shrink:0;
+  }
+  .logo-wordmark{
+    height:42px;
+    width:auto;
+    display:block;
+  }
+
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.14em;
+    color:var(--rust);
+    margin:0 0 10px;
+    text-transform:uppercase;
+  }
+
+  .tagline{
+    font-size:14.5px;
+    line-height:1.55;
+    color:var(--text-muted);
+    margin:0;
+    max-width:46ch;
+  }
+
+  .panel-body{
+    padding:6px 34px 8px;
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+  }
+
+  #toolSection{
+    display:flex;
+    flex-direction:column;
+    gap:20px;
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+  }
+
+  label{
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--text);
+    letter-spacing:0.01em;
+  }
+
+  .optional{
+    font-weight:400;
+    color:var(--text-dim);
+    text-transform:none;
+    letter-spacing:0;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="number"]{
+    width:100%;
+    background:var(--vault-recess);
+    border:1px solid var(--seam);
+    border-radius:8px;
+    padding:11px 13px;
+    color:var(--text);
+    font-family:var(--font-mono);
+    font-size:14.5px;
+    outline:none;
+    transition:border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  input[type="text"]::placeholder,
+  input[type="password"]::placeholder{
+    color:var(--text-dim);
+    font-family:var(--font-body);
+  }
+
+  input[type="text"]:focus-visible,
+  input[type="password"]:focus-visible,
+  input[type="number"]:focus-visible{
+    border-color:var(--rust);
+    box-shadow:0 0 0 3px rgba(193,102,44,0.18);
+  }
+
+  .input-row{
+    display:flex;
+    gap:8px;
+  }
+  .input-row input{flex:1;min-width:0;}
+
+  .icon-btn{
+    flex-shrink:0;
+    width:42px;
+    background:var(--vault-recess);
+    border:1px solid var(--seam);
+    border-radius:8px;
+    color:var(--text-muted);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:color 0.15s ease, border-color 0.15s ease;
+  }
+  .icon-btn:hover{color:var(--rust-bright);border-color:var(--seam-light);}
+  .icon-btn svg{width:18px;height:18px;}
+
+  .hint{
+    font-size:12px;
+    line-height:1.5;
+    color:var(--text-dim);
+    margin:0;
+  }
+
+  details.advanced{
+    border-top:1px dashed var(--seam);
+    border-bottom:1px dashed var(--seam);
+    padding:14px 0;
+  }
+  details.advanced summary{
+    cursor:pointer;
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+    list-style:none;
+  }
+  details.advanced summary::-webkit-details-marker{display:none;}
+  details.advanced summary::before{
+    content:"▸ ";
+    color:var(--rust);
+  }
+  details.advanced[open] summary::before{content:"▾ ";}
+  details.advanced .field{margin-top:14px;}
+  details.advanced input[type="number"]{max-width:100px;}
+
+  .length-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+  }
+  .length-row output{
+    font-family:var(--font-mono);
+    font-size:15px;
+    color:var(--rust-bright);
+    font-variant-numeric:tabular-nums;
+  }
+
+  input[type="range"]{
+    -webkit-appearance:none;
+    width:100%;
+    height:4px;
+    border-radius:2px;
+    background:var(--seam);
+    outline:none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:17px;height:17px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--rust-bright), var(--rust) 70%);
+    border:1px solid #7d421d;
+    cursor:pointer;
+    box-shadow:0 2px 4px rgba(0,0,0,0.4);
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:17px;height:17px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, var(--rust-bright), var(--rust) 70%);
+    border:1px solid #7d421d;
+    cursor:pointer;
+  }
+
+  .toggles{
+    flex-direction:row;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .switch{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    background:var(--vault-recess);
+    border:1px solid var(--seam);
+    border-radius:20px;
+    padding:7px 12px 7px 8px;
+    cursor:pointer;
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--text-muted);
+    transition:border-color 0.15s ease, color 0.15s ease;
+  }
+  .switch input{
+    appearance:none;
+    width:28px;height:16px;
+    border-radius:9px;
+    background:var(--seam);
+    position:relative;
+    margin:0;
+    cursor:pointer;
+    transition:background 0.15s ease;
+    flex-shrink:0;
+  }
+  .switch input::before{
+    content:"";
+    position:absolute;
+    top:2px;left:2px;
+    width:12px;height:12px;
+    border-radius:50%;
+    background:var(--text-dim);
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .switch input:checked{background:rgba(193,102,44,0.28);}
+  .switch input:checked::before{
+    transform:translateX(12px);
+    background:var(--rust-bright);
+  }
+  .switch:has(input:checked){color:var(--text);border-color:var(--seam-light);}
+  .switch input:focus-visible{outline:2px solid var(--rust);outline-offset:2px;}
+
+  .warn{
+    font-size:12.5px;
+    color:var(--warn);
+    margin:-10px 0 0;
+    font-weight:600;
+  }
+
+  .readout{
+    margin:22px 34px 0;
+    background:var(--vault-recess);
+    border:1px solid var(--seam);
+    border-radius:12px;
+    padding:18px 18px 14px;
+  }
+
+  .readout-label{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    letter-spacing:0.12em;
+    color:var(--text-dim);
+  }
+  .entropy{color:var(--success);}
+
+  .readout-display{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+
+  .output-scroll{
+    flex:1;
+    min-width:0;
+    overflow-x:auto;
+    scrollbar-width:thin;
+  }
+
+  .output-text{
+    font-family:var(--font-mono);
+    font-size:19px;
+    font-weight:500;
+    letter-spacing:0.02em;
+    color:var(--rust-bright);
+    white-space:pre;
+  }
+  .output-text.placeholder{
+    color:var(--text-dim);
+    font-family:var(--font-body);
+    font-size:14px;
+    font-style:normal;
+  }
+  .output-text.masked{
+    -webkit-text-security:disc;
+    text-security:disc;
+    letter-spacing:0.06em;
+  }
+
+  .copy-btn{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:linear-gradient(180deg, var(--rust-bright), var(--rust));
+    color:#241c0d;
+    border:none;
+    border-radius:8px;
+    padding:9px 16px;
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:13px;
+    cursor:pointer;
+    transition:filter 0.15s ease, transform 0.05s ease;
+  }
+  .copy-btn:hover:not(:disabled){filter:brightness(1.08);}
+  .copy-btn:active:not(:disabled){transform:translateY(1px);}
+  .copy-btn:disabled{
+    background:var(--seam);
+    color:var(--text-dim);
+    cursor:not-allowed;
+  }
+  .copy-btn svg{width:14px;height:14px;}
+  .copy-btn.copied{background:linear-gradient(180deg, #8ad6a6, var(--success));color:#0d2216;}
+
+  .mask-btn{
+    flex-shrink:0;
+    background:transparent;
+    border:none;
+    color:var(--text-dim);
+    cursor:pointer;
+    display:flex;
+    padding:6px;
+  }
+  .mask-btn:hover{color:var(--text-muted);}
+  .mask-btn svg{width:16px;height:16px;}
+
+  .spec{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-dim);
+    margin:12px 0 0;
+    letter-spacing:0.02em;
+  }
+
+  .auth-bar{
+    margin-top:18px;
+    display:flex;
+    justify-content:flex-end;
+  }
+  .link-btn{
+    background:none;
+    border:none;
+    padding:0;
+    color:var(--rust);
+    font-family:var(--font-body);
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:2px;
+  }
+  .link-btn:hover{color:var(--rust-bright);}
+  .logged-in-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:12.5px;
+    color:var(--text-muted);
+  }
+  .logged-in-bar strong{color:var(--text);}
+
+  .login-form{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    padding:6px 0 10px;
+  }
+  .login-tabs{
+    display:flex;
+    gap:6px;
+  }
+  .login-tab{
+    flex:1;
+    background:var(--vault-recess);
+    border:1px solid var(--seam);
+    color:var(--text-muted);
+    padding:9px;
+    border-radius:8px;
+    font-family:var(--font-body);
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+    transition:border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  }
+  .login-tab.active{
+    border-color:var(--rust);
+    color:var(--text);
+    background:rgba(193,102,44,0.14);
+  }
+  .login-form code{
+    font-family:var(--font-mono);
+    background:var(--vault-recess);
+    padding:1px 6px;
+    border-radius:4px;
+    color:var(--rust-bright);
+  }
+  .login-actions{
+    display:flex;
+    align-items:center;
+    gap:18px;
+  }
+
+  .site-select-row{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  select#siteSelect{
+    flex:1;
+    width:100%;
+    background:var(--vault-recess);
+    border:1px solid var(--seam);
+    border-radius:8px;
+    padding:11px 13px;
+    color:var(--text);
+    font-family:var(--font-mono);
+    font-size:14.5px;
+    outline:none;
+    cursor:pointer;
+    transition:border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  select#siteSelect:focus-visible{
+    border-color:var(--rust);
+    box-shadow:0 0 0 3px rgba(193,102,44,0.18);
+  }
+
+  .icon-text-btn{
+    flex-shrink:0;
+    background:transparent;
+    border:1px solid var(--seam);
+    color:var(--text-muted);
+    border-radius:8px;
+    padding:9px 12px;
+    font-family:var(--font-body);
+    font-size:12.5px;
+    font-weight:600;
+    cursor:pointer;
+    transition:color 0.15s ease, border-color 0.15s ease;
+  }
+  .icon-text-btn:hover{color:var(--warn);border-color:var(--warn);}
+
+  .new-site-row,
+  .remove-confirm-row{
+    display:flex;
+    gap:8px;
+    align-items:center;
+    margin-top:10px;
+    flex-wrap:wrap;
+  }
+  .new-site-row input{flex:1;min-width:140px;}
+  .remove-confirm-text{
+    font-size:12.5px;
+    color:var(--text-muted);
+  }
+  .copy-btn.small{padding:9px 14px;font-size:12.5px;}
+  .copy-btn.danger{
+    background:linear-gradient(180deg, #d1573d, #b8402c);
+    color:#241c0d;
+  }
+
+  .panel-footer{
+    padding:20px 34px 30px;
+  }
+  .panel-footer p{
+    font-size:12px;
+    line-height:1.6;
+    color:var(--text-dim);
+    margin:0;
+  }
+
+  @media (max-width:480px){
+    .panel-header,.panel-body,.panel-footer{padding-left:22px;padding-right:22px;}
+    .readout{margin-left:22px;margin-right:22px;}
+    .logo-icon{height:36px;}
+    .logo-wordmark{height:36px;}
+    .output-text{font-size:16px;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important;}
+  }
+
+  @keyframes flicker{
+    0%{opacity:0;}
+    30%{opacity:0.6;}
+    45%{opacity:0.15;}
+    60%{opacity:0.9;}
+    100%{opacity:1;}
+  }
+  .output-text.reveal{animation:flicker 0.4s ease-out;}
+</style>
+
+<div class="page">
+  <div class="panel">
+    <div class="panel-header">
+      <div class="logo-row">
+        <img class="logo-icon" src="assets/logo.png" alt="" />
+        <img class="logo-wordmark" src="assets/wordmark.png" alt="Loksmith" />
+      </div>
+      <p class="eyebrow">Deterministic password forge</p>
+      <p class="tagline">One memorable passphrase, forged into a strong password — the same way, every time you need it.</p>
+      <div class="auth-bar">
+        <button type="button" class="link-btn" id="loginLinkBtn">Log in to save site profiles</button>
+        <div class="logged-in-bar" id="loggedInBar" hidden>
+          <span>Signed in as <strong id="loggedInName"></strong></span>
+          <button type="button" class="link-btn" id="logoutBtn">Log out</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-body">
+      <div class="login-form" id="loginForm" hidden>
+        <div class="login-tabs" role="tablist">
+          <button type="button" class="login-tab active" id="tabSignIn" role="tab" aria-selected="true">Sign in</button>
+          <button type="button" class="login-tab" id="tabCreate" role="tab" aria-selected="false">Create account</button>
+        </div>
+        <div class="field">
+          <label for="loginUsername">Username</label>
+          <input id="loginUsername" type="text" autocomplete="username" spellcheck="false" />
+        </div>
+        <div class="field">
+          <label for="loginPassword">Password</label>
+          <input id="loginPassword" type="password" autocomplete="current-password" />
+        </div>
+        <div class="field" id="confirmPasswordField" hidden>
+          <label for="confirmPassword">Confirm password</label>
+          <input id="confirmPassword" type="password" autocomplete="new-password" />
+        </div>
+        <p class="hint" id="loginModeHint">Sign in to see the site profiles saved to this browser under your username.</p>
+        <p class="warn" id="loginError" hidden></p>
+        <div class="login-actions">
+          <button type="button" class="copy-btn" id="loginSubmitBtn"><span>Sign in</span></button>
+          <button type="button" class="link-btn" id="loginCancelBtn">Cancel</button>
+        </div>
+      </div>
+
+      <div id="toolSection">
+      <div class="field">
+        <label for="passphrase">Master passphrase</label>
+        <div class="input-row">
+          <input id="passphrase" type="password" autocomplete="off" spellcheck="false" placeholder="e.g. correct horse battery staple" />
+          <button type="button" class="icon-btn" id="togglePass" aria-label="Show passphrase" aria-pressed="false"></button>
+        </div>
+        <p class="hint">Typed here only — never transmitted, never stored.</p>
+      </div>
+
+      <div class="field" id="siteFieldAnon">
+        <label for="site">Site or account <span class="optional">— recommended</span></label>
+        <input id="site" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. github.com" />
+        <p class="hint">Used as a unique salt, so the same passphrase forges a different password per site.</p>
+      </div>
+
+      <div class="field" id="siteFieldDashboard" hidden>
+        <label for="siteSelect">Saved site</label>
+        <div class="site-select-row">
+          <select id="siteSelect" aria-label="Saved site"></select>
+          <button type="button" class="icon-text-btn" id="removeSiteBtn" hidden>Remove</button>
+        </div>
+        <div class="new-site-row" id="newSiteRow" hidden>
+          <input id="newSiteName" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. gmail.com" />
+          <button type="button" class="copy-btn small" id="newSiteConfirmBtn"><span>Add</span></button>
+          <button type="button" class="link-btn" id="newSiteCancelBtn">Cancel</button>
+        </div>
+        <div class="remove-confirm-row" id="removeConfirmRow" hidden>
+          <span class="remove-confirm-text">Remove this site's saved settings?</span>
+          <button type="button" class="copy-btn small danger" id="removeConfirmYes"><span>Remove</span></button>
+          <button type="button" class="link-btn" id="removeConfirmNo">Cancel</button>
+        </div>
+        <p class="hint">Settings below are saved to <strong>this browser only</strong>, under your account — they won't follow you to another device, browser, or profile. Your passphrase is never saved.</p>
+      </div>
+
+      <details class="advanced">
+        <summary>Advanced</summary>
+        <div class="field">
+          <label for="version">Key version</label>
+          <input id="version" type="number" min="1" max="99" value="1" inputmode="numeric" />
+          <p class="hint">Raise this to rotate a site's password without changing your passphrase or its name.</p>
+        </div>
+      </details>
+
+      <div class="field">
+        <div class="length-row">
+          <label for="length">Length</label>
+          <output id="lengthValue" for="length">20</output>
+        </div>
+        <input id="length" type="range" min="8" max="64" value="20" />
+      </div>
+
+      <div class="field">
+        <label id="togglesLabel">Character types</label>
+        <div class="toggles" role="group" aria-labelledby="togglesLabel">
+          <label class="switch"><input type="checkbox" id="optUpper" checked><span>A–Z</span></label>
+          <label class="switch"><input type="checkbox" id="optLower" checked><span>a–z</span></label>
+          <label class="switch"><input type="checkbox" id="optDigits" checked><span>0–9</span></label>
+          <label class="switch"><input type="checkbox" id="optSymbols" checked><span>! @ #</span></label>
+        </div>
+        <p class="warn" id="classWarning" hidden>Select at least one character type to forge a password.</p>
+      </div>
+
+      <div class="field" id="excludeField">
+        <label for="excludeSymbols">Exclude specific symbols <span class="optional">— optional</span></label>
+        <input id="excludeSymbols" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. {};:^" />
+        <p class="hint" id="symbolPreview"></p>
+      </div>
+      </div>
+    </div>
+
+    <div class="readout" id="readoutSection">
+      <div class="readout-label">
+        <span>FORGED PASSWORD</span>
+        <span class="entropy" id="entropy"></span>
+      </div>
+      <div class="readout-display">
+        <div class="output-scroll">
+          <span id="output" class="output-text placeholder">Enter a passphrase above to begin</span>
+        </div>
+        <button type="button" class="mask-btn" id="maskBtn" aria-label="Hide password" aria-pressed="false" hidden></button>
+        <button type="button" class="copy-btn" id="copyBtn" disabled></button>
+      </div>
+      <p class="spec" id="spec">PBKDF2-HMAC-SHA256 · 100,000 iterations · HKDF-expanded</p>
+    </div>
+
+    <div class="panel-footer">
+      <p>Runs entirely in your browser via the Web Crypto API — nothing here is ever transmitted anywhere. Saved site profiles (when signed in) live only in this browser's local storage; your passphrase itself is never saved, even then. If you forget your passphrase, or exactly which site name you used, this password cannot be recreated, so keep a note of your site names somewhere safe.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const ICONS = {
+    eye: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></svg>',
+    eyeOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l18 18"/><path d="M10.6 5.2A10.6 10.6 0 0 1 12 5c7 0 10.5 7 10.5 7a13.6 13.6 0 0 1-3.1 3.9M6.6 6.6C3.6 8.5 1.5 12 1.5 12S5 19 12 19a10.7 10.7 0 0 0 4.2-.85"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>',
+    copy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+    check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'
+  };
+
+  const el = (id) => document.getElementById(id);
+  const passphraseEl = el('passphrase');
+  const siteEl = el('site');
+  const versionEl = el('version');
+  const lengthEl = el('length');
+  const lengthValueEl = el('lengthValue');
+  const optUpper = el('optUpper');
+  const optLower = el('optLower');
+  const optDigits = el('optDigits');
+  const optSymbols = el('optSymbols');
+  const classWarning = el('classWarning');
+  const excludeSymbolsEl = el('excludeSymbols');
+  const excludeFieldEl = el('excludeField');
+  const symbolPreviewEl = el('symbolPreview');
+  const outputEl = el('output');
+  const entropyEl = el('entropy');
+  const copyBtn = el('copyBtn');
+  const maskBtn = el('maskBtn');
+  const togglePassBtn = el('togglePass');
+
+  const loginLinkBtn = el('loginLinkBtn');
+  const loggedInBar = el('loggedInBar');
+  const loggedInNameEl = el('loggedInName');
+  const logoutBtn = el('logoutBtn');
+  const loginForm = el('loginForm');
+  const tabSignIn = el('tabSignIn');
+  const tabCreate = el('tabCreate');
+  const loginUsernameEl = el('loginUsername');
+  const loginPasswordEl = el('loginPassword');
+  const confirmPasswordField = el('confirmPasswordField');
+  const confirmPasswordEl = el('confirmPassword');
+  const loginModeHint = el('loginModeHint');
+  const loginError = el('loginError');
+  const loginSubmitBtn = el('loginSubmitBtn');
+  const loginCancelBtn = el('loginCancelBtn');
+  const toolSectionEl = el('toolSection');
+  const readoutSectionEl = el('readoutSection');
+  const siteFieldAnonEl = el('siteFieldAnon');
+  const siteFieldDashboardEl = el('siteFieldDashboard');
+  const siteSelectEl = el('siteSelect');
+  const removeSiteBtn = el('removeSiteBtn');
+  const newSiteRow = el('newSiteRow');
+  const newSiteNameEl = el('newSiteName');
+  const newSiteConfirmBtn = el('newSiteConfirmBtn');
+  const newSiteCancelBtn = el('newSiteCancelBtn');
+  const removeConfirmRow = el('removeConfirmRow');
+  const removeConfirmYes = el('removeConfirmYes');
+  const removeConfirmNo = el('removeConfirmNo');
+
+  togglePassBtn.innerHTML = ICONS.eye;
+  maskBtn.innerHTML = ICONS.eye;
+  copyBtn.innerHTML = '<span>Copy</span>' + ICONS.copy;
+
+  const ACCOUNTS_KEY = 'loksmith:accounts';
+  const STORAGE_UNAVAILABLE_MSG = "Local accounts need browser storage, which isn't available right now (private browsing or blocked site data).";
+
+  function storageAvailable() {
+    try {
+      const testKey = '__loksmith_test__';
+      window.localStorage.setItem(testKey, '1');
+      window.localStorage.removeItem(testKey);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function normalizeUsername(username) {
+    return username.trim().toLowerCase();
+  }
+
+  function bytesToBase64(bytes) {
+    let binary = '';
+    bytes.forEach(b => { binary += String.fromCharCode(b); });
+    return btoa(binary);
+  }
+
+  function base64ToBytes(b64) {
+    const binary = atob(b64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return bytes;
+  }
+
+  async function hashPassword(password, saltBytes) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw', enc.encode(password), { name: 'PBKDF2' }, false, ['deriveBits']
+    );
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt: saltBytes, iterations: 100000, hash: 'SHA-256' },
+      keyMaterial, 256
+    );
+    return new Uint8Array(bits);
+  }
+
+  function loadAccounts() {
+    try {
+      const raw = window.localStorage.getItem(ACCOUNTS_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      return (parsed && typeof parsed === 'object') ? parsed : {};
+    } catch (err) {
+      return {};
+    }
+  }
+
+  function saveAccounts(accounts) {
+    try {
+      window.localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(accounts));
+    } catch (err) {
+      /* best-effort save */
+    }
+  }
+
+  function sitesStorageKey(username) {
+    return 'loksmith:sites:' + normalizeUsername(username);
+  }
+
+  function loadSites(username) {
+    try {
+      const raw = window.localStorage.getItem(sitesStorageKey(username));
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      return (parsed && typeof parsed === 'object') ? parsed : {};
+    } catch (err) {
+      return {};
+    }
+  }
+
+  function saveSites(username, profiles) {
+    try {
+      window.localStorage.setItem(sitesStorageKey(username), JSON.stringify(profiles));
+    } catch (err) {
+      /* best-effort save; the generated password itself never depends on this */
+    }
+  }
+
+  let appState = 'anonymous';
+  let loginMode = 'signin';
+  let currentUsername = '';
+  let siteProfiles = {};
+  let currentSiteId = null;
+  let currentSiteName = '';
+  let sitesCache = [];
+  let pendingPreviousSiteId = null;
+
+  function refreshSitesCache() {
+    siteProfiles = loadSites(currentUsername);
+    sitesCache = Object.keys(siteProfiles)
+      .map(id => ({ id: id, name: siteProfiles[id].name || id }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  const BASE = {
+    upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    lower: 'abcdefghijklmnopqrstuvwxyz',
+    digits: '0123456789',
+    symbols: '!@#$%^&*()-_=+[]{};:,.<>?'
+  };
+
+  function getSymbolChars() {
+    const excludeSet = new Set(excludeSymbolsEl.value.split(''));
+    return BASE.symbols.split('').filter(ch => !excludeSet.has(ch)).join('');
+  }
+
+  function getEnabledClasses() {
+    const classes = [
+      { key: 'upper', chars: BASE.upper, el: optUpper },
+      { key: 'lower', chars: BASE.lower, el: optLower },
+      { key: 'digits', chars: BASE.digits, el: optDigits },
+      { key: 'symbols', chars: getSymbolChars(), el: optSymbols }
+    ];
+    return classes.filter(c => c.el.checked && c.chars.length > 0);
+  }
+
+  function updateSymbolPreview() {
+    const chars = getSymbolChars();
+    symbolPreviewEl.textContent = chars.length
+      ? ('Active symbols: ' + chars)
+      : 'All symbols excluded — symbols will be skipped';
+  }
+
+  function syncExcludeVisibility() {
+    excludeFieldEl.hidden = !optSymbols.checked;
+  }
+
+  let masked = false;
+  let generation = 0;
+  let lastPassword = '';
+  let debounceHandle = null;
+
+  // This string feeds the PBKDF2 salt and HKDF expand context below — once this
+  // app is actually in use, changing it again would silently change every
+  // derived password for the same passphrase + site. Keep it frozen after launch.
+  const CRYPTO_DOMAIN = 'loksmith';
+
+  function concatBytes(...arrs) {
+    const total = arrs.reduce((n, a) => n + a.length, 0);
+    const out = new Uint8Array(total);
+    let offset = 0;
+    for (const a of arrs) { out.set(a, offset); offset += a.length; }
+    return out;
+  }
+
+  async function deriveKey(passphrase, salt) {
+    const enc = new TextEncoder();
+    const keyMaterial = await crypto.subtle.importKey(
+      'raw', enc.encode(passphrase), { name: 'PBKDF2' }, false, ['deriveBits']
+    );
+    const bits = await crypto.subtle.deriveBits(
+      { name: 'PBKDF2', salt: enc.encode(salt), iterations: 100000, hash: 'SHA-256' },
+      keyMaterial, 256
+    );
+    return new Uint8Array(bits);
+  }
+
+  async function hkdfExpand(prk, infoStr, length) {
+    const enc = new TextEncoder();
+    const info = enc.encode(infoStr);
+    const hmacKey = await crypto.subtle.importKey(
+      'raw', prk, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+    );
+    let output = new Uint8Array(0);
+    let t = new Uint8Array(0);
+    let counter = 1;
+    while (output.length < length) {
+      const input = concatBytes(t, info, new Uint8Array([counter]));
+      const sig = new Uint8Array(await crypto.subtle.sign('HMAC', hmacKey, input));
+      t = sig;
+      output = concatBytes(output, t);
+      counter++;
+    }
+    return output.slice(0, length);
+  }
+
+  function makeByteReader(pool) {
+    let cursor = 0;
+    return function nextBelow(limit) {
+      const threshold = Math.floor(256 / limit) * limit;
+      while (true) {
+        if (cursor >= pool.length) throw new Error('pool exhausted');
+        const b = pool[cursor++];
+        if (b < threshold) return b % limit;
+      }
+    };
+  }
+
+  async function forgePassword(passphrase, site, version, length, enabledClasses) {
+    const salt = CRYPTO_DOMAIN + ':v' + version + ':' + site.trim().toLowerCase();
+    const prk = await deriveKey(passphrase, salt);
+    const poolLen = Math.max(256, length * 14);
+    const pool = await hkdfExpand(prk, CRYPTO_DOMAIN + '-expand', poolLen);
+    const nextBelow = makeByteReader(pool);
+
+    const unionChars = enabledClasses.map(c => c.chars).join('');
+    const forced = enabledClasses.slice(0, length).map(c => c.chars[nextBelow(c.chars.length)]);
+    const rest = [];
+    for (let i = forced.length; i < length; i++) {
+      rest.push(unionChars[nextBelow(unionChars.length)]);
+    }
+    const combined = forced.concat(rest);
+
+    for (let i = combined.length - 1; i > 0; i--) {
+      const j = nextBelow(i + 1);
+      [combined[i], combined[j]] = [combined[j], combined[i]];
+    }
+
+    const entropyBits = Math.round(length * Math.log2(unionChars.length));
+    return { password: combined.join(''), entropyBits };
+  }
+
+  function setPlaceholder(text) {
+    outputEl.textContent = text;
+    outputEl.classList.add('placeholder');
+    outputEl.classList.remove('masked');
+    entropyEl.textContent = '';
+    copyBtn.disabled = true;
+    maskBtn.hidden = true;
+    lastPassword = '';
+  }
+
+  function renderPassword(password, entropyBits) {
+    lastPassword = password;
+    outputEl.classList.remove('placeholder');
+    outputEl.classList.remove('reveal');
+    void outputEl.offsetWidth;
+    outputEl.classList.add('reveal');
+    outputEl.textContent = password;
+    outputEl.classList.toggle('masked', masked);
+    entropyEl.textContent = '~' + entropyBits + ' bits';
+    copyBtn.disabled = false;
+    maskBtn.hidden = false;
+  }
+
+  async function regenerate() {
+    const passphrase = passphraseEl.value;
+    const anyChecked = optUpper.checked || optLower.checked || optDigits.checked || optSymbols.checked;
+    const enabledClasses = getEnabledClasses();
+    const length = parseInt(lengthEl.value, 10);
+
+    if (!passphrase) {
+      classWarning.hidden = true;
+      setPlaceholder('Enter a passphrase above to begin');
+      return;
+    }
+    if (appState === 'dashboard' && !currentSiteId) {
+      classWarning.hidden = true;
+      setPlaceholder('Choose or add a saved site above');
+      return;
+    }
+    if (!anyChecked) {
+      classWarning.hidden = false;
+      setPlaceholder('Select at least one character type');
+      return;
+    }
+    classWarning.hidden = true;
+    if (enabledClasses.length === 0) {
+      setPlaceholder('No characters available — adjust your exclusions');
+      return;
+    }
+
+    const site = appState === 'dashboard' ? currentSiteName : siteEl.value;
+    let version = parseInt(versionEl.value, 10);
+    if (!Number.isFinite(version) || version < 1) version = 1;
+
+    const myGeneration = ++generation;
+    try {
+      const { password, entropyBits } = await forgePassword(passphrase, site, version, length, enabledClasses);
+      if (myGeneration !== generation) return;
+      renderPassword(password, entropyBits);
+    } catch (err) {
+      if (myGeneration !== generation) return;
+      setPlaceholder('Could not forge a password — try a shorter length');
+    }
+  }
+
+  function saveCurrentSiteSettings() {
+    if (appState !== 'dashboard' || !currentSiteId) return;
+    let version = parseInt(versionEl.value, 10);
+    if (!Number.isFinite(version) || version < 1) version = 1;
+    siteProfiles[currentSiteId] = {
+      name: currentSiteName,
+      length: parseInt(lengthEl.value, 10),
+      upper: optUpper.checked,
+      lower: optLower.checked,
+      digits: optDigits.checked,
+      symbols: optSymbols.checked,
+      excludeSymbols: excludeSymbolsEl.value,
+      version: version,
+      updatedAt: new Date().toISOString()
+    };
+    saveSites(currentUsername, siteProfiles);
+  }
+
+  function scheduleRegenerate() {
+    clearTimeout(debounceHandle);
+    debounceHandle = setTimeout(() => {
+      regenerate();
+      saveCurrentSiteSettings();
+    }, 220);
+  }
+
+  lengthEl.addEventListener('input', () => {
+    lengthValueEl.textContent = lengthEl.value;
+    scheduleRegenerate();
+  });
+
+  [passphraseEl, siteEl, versionEl].forEach(input => {
+    input.addEventListener('input', scheduleRegenerate);
+  });
+  [optUpper, optLower, optDigits, optSymbols].forEach(cb => {
+    cb.addEventListener('change', () => {
+      if (cb === optSymbols) syncExcludeVisibility();
+      scheduleRegenerate();
+    });
+  });
+  excludeSymbolsEl.addEventListener('input', () => {
+    updateSymbolPreview();
+    scheduleRegenerate();
+  });
+
+  function setAppState(next) {
+    appState = next;
+    loginForm.hidden = next !== 'login';
+    toolSectionEl.hidden = next === 'login';
+    readoutSectionEl.hidden = next === 'login';
+    loginLinkBtn.hidden = next !== 'anonymous';
+    loggedInBar.hidden = next !== 'dashboard';
+    siteFieldAnonEl.hidden = next !== 'anonymous';
+    siteFieldDashboardEl.hidden = next !== 'dashboard';
+  }
+
+  function slugify(name) {
+    let slug = name.trim().toLowerCase().replace(/[^a-z0-9._~:@+-]+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    if (!slug) slug = 'site';
+    return slug.slice(0, 120);
+  }
+
+  function showNewSiteRow() {
+    newSiteRow.hidden = false;
+    newSiteNameEl.focus();
+  }
+  function hideNewSiteRow() {
+    newSiteRow.hidden = true;
+    newSiteNameEl.value = '';
+  }
+  function hideRemoveConfirm() {
+    removeConfirmRow.hidden = true;
+  }
+
+  function renderSiteOptions() {
+    const previousValue = currentSiteId;
+    siteSelectEl.innerHTML = '';
+    if (sitesCache.length === 0) {
+      const opt = document.createElement('option');
+      opt.value = '';
+      opt.textContent = 'No saved sites yet';
+      opt.disabled = true;
+      siteSelectEl.appendChild(opt);
+    }
+    sitesCache.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.id;
+      opt.textContent = s.name;
+      siteSelectEl.appendChild(opt);
+    });
+    const addOpt = document.createElement('option');
+    addOpt.value = '__new__';
+    addOpt.textContent = '+ Add new site…';
+    siteSelectEl.appendChild(addOpt);
+
+    if (previousValue && sitesCache.some(s => s.id === previousValue)) {
+      siteSelectEl.value = previousValue;
+      removeSiteBtn.hidden = false;
+    } else if (sitesCache.length > 0 && newSiteRow.hidden) {
+      siteSelectEl.value = sitesCache[0].id;
+      selectSite(sitesCache[0].id);
+    } else if (sitesCache.length === 0 && newSiteRow.hidden) {
+      siteSelectEl.value = '__new__';
+      currentSiteId = null;
+      currentSiteName = '';
+      removeSiteBtn.hidden = true;
+      showNewSiteRow();
+      setPlaceholder('Name and add a site to begin');
+    }
+  }
+
+  function selectSite(id) {
+    hideRemoveConfirm();
+    const data = siteProfiles[id];
+    if (!data) return;
+    currentSiteId = id;
+    currentSiteName = data.name || id;
+    removeSiteBtn.hidden = false;
+    lengthEl.value = data.length || 20;
+    lengthValueEl.textContent = lengthEl.value;
+    optUpper.checked = data.upper !== false;
+    optLower.checked = data.lower !== false;
+    optDigits.checked = data.digits !== false;
+    optSymbols.checked = data.symbols !== false;
+    excludeSymbolsEl.value = data.excludeSymbols || '';
+    versionEl.value = data.version || 1;
+    syncExcludeVisibility();
+    updateSymbolPreview();
+    regenerate();
+  }
+
+  function handleAddSite() {
+    const name = newSiteNameEl.value.trim();
+    if (!name) { newSiteNameEl.focus(); return; }
+    const slug = slugify(name);
+    const existingIds = new Set(sitesCache.map(s => s.id));
+    let candidate = slug, n = 2;
+    while (existingIds.has(candidate)) { candidate = slug + '-' + n; n++; }
+    siteProfiles[candidate] = {
+      name: name,
+      length: 20,
+      upper: true,
+      lower: true,
+      digits: true,
+      symbols: true,
+      excludeSymbols: '',
+      version: 1,
+      updatedAt: new Date().toISOString()
+    };
+    saveSites(currentUsername, siteProfiles);
+    refreshSitesCache();
+
+    hideNewSiteRow();
+    pendingPreviousSiteId = null;
+    currentSiteId = candidate;
+    currentSiteName = name;
+
+    renderSiteOptions();
+
+    removeSiteBtn.hidden = false;
+    lengthEl.value = 20;
+    lengthValueEl.textContent = '20';
+    optUpper.checked = optLower.checked = optDigits.checked = optSymbols.checked = true;
+    excludeSymbolsEl.value = '';
+    versionEl.value = 1;
+    syncExcludeVisibility();
+    updateSymbolPreview();
+    regenerate();
+  }
+
+  function enterDashboard(username) {
+    currentUsername = username;
+    loggedInNameEl.textContent = username;
+    setAppState('dashboard');
+    currentSiteId = null;
+    currentSiteName = '';
+    pendingPreviousSiteId = null;
+    passphraseEl.value = '';
+    hideNewSiteRow();
+    hideRemoveConfirm();
+    refreshSitesCache();
+    renderSiteOptions();
+    if (!currentSiteId) {
+      setPlaceholder('Choose or add a saved site above');
+    }
+  }
+
+  function showLoginError(message) {
+    loginError.textContent = message;
+    loginError.hidden = false;
+    loginPasswordEl.value = '';
+    confirmPasswordEl.value = '';
+  }
+
+  function setLoginMode(mode) {
+    loginMode = mode;
+    tabSignIn.classList.toggle('active', mode === 'signin');
+    tabCreate.classList.toggle('active', mode === 'create');
+    tabSignIn.setAttribute('aria-selected', String(mode === 'signin'));
+    tabCreate.setAttribute('aria-selected', String(mode === 'create'));
+    confirmPasswordField.hidden = mode !== 'create';
+    loginSubmitBtn.querySelector('span').textContent = mode === 'create' ? 'Create account' : 'Sign in';
+    loginModeHint.textContent = mode === 'create'
+      ? "Choose a username and password to keep your saved sites separate from anyone else using this browser. This account lives only here — it isn't real account security, so don't reuse a sensitive password."
+      : 'Sign in to see the site profiles saved to this browser under your username.';
+    loginError.hidden = true;
+    loginPasswordEl.value = '';
+    confirmPasswordEl.value = '';
+  }
+
+  async function handleAuthSubmit() {
+    const usernameRaw = loginUsernameEl.value;
+    const username = usernameRaw.trim();
+    const password = loginPasswordEl.value;
+
+    if (!username) { showLoginError('Enter a username.'); return; }
+    if (!password) { showLoginError('Enter a password.'); return; }
+    if (!storageAvailable()) { showLoginError(STORAGE_UNAVAILABLE_MSG); return; }
+
+    const key = normalizeUsername(username);
+    const accounts = loadAccounts();
+
+    if (loginMode === 'create') {
+      if (password.length < 4) { showLoginError('Use a password of at least 4 characters.'); return; }
+      if (password !== confirmPasswordEl.value) { showLoginError("Passwords don't match."); return; }
+      if (accounts[key]) { showLoginError('That username is already taken on this browser.'); return; }
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      const hash = await hashPassword(password, salt);
+      accounts[key] = {
+        username: username,
+        salt: bytesToBase64(salt),
+        hash: bytesToBase64(hash),
+        createdAt: new Date().toISOString()
+      };
+      saveAccounts(accounts);
+      loginError.hidden = true;
+      enterDashboard(username);
+      return;
+    }
+
+    const account = accounts[key];
+    if (!account) { showLoginError('No account with that username on this browser yet.'); return; }
+    const salt = base64ToBytes(account.salt);
+    const hash = await hashPassword(password, salt);
+    if (bytesToBase64(hash) !== account.hash) { showLoginError('Incorrect username or password.'); return; }
+    loginError.hidden = true;
+    enterDashboard(account.username || username);
+  }
+
+  loginLinkBtn.addEventListener('click', () => {
+    setAppState('login');
+    setLoginMode('signin');
+    loginUsernameEl.value = '';
+    loginUsernameEl.focus();
+  });
+
+  loginCancelBtn.addEventListener('click', () => {
+    setAppState('anonymous');
+  });
+
+  tabSignIn.addEventListener('click', () => setLoginMode('signin'));
+  tabCreate.addEventListener('click', () => setLoginMode('create'));
+
+  loginSubmitBtn.addEventListener('click', handleAuthSubmit);
+  [loginUsernameEl, loginPasswordEl, confirmPasswordEl].forEach(input => {
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') handleAuthSubmit(); });
+  });
+
+  logoutBtn.addEventListener('click', () => {
+    currentSiteId = null;
+    currentSiteName = '';
+    currentUsername = '';
+    passphraseEl.value = '';
+    setAppState('anonymous');
+    setPlaceholder('Enter a passphrase above to begin');
+  });
+
+  siteSelectEl.addEventListener('change', () => {
+    const val = siteSelectEl.value;
+    if (val === '__new__') {
+      pendingPreviousSiteId = currentSiteId;
+      currentSiteId = null;
+      currentSiteName = '';
+      removeSiteBtn.hidden = true;
+      showNewSiteRow();
+      setPlaceholder('Name and add a site to begin');
+      return;
+    }
+    hideNewSiteRow();
+    selectSite(val);
+  });
+
+  newSiteConfirmBtn.addEventListener('click', handleAddSite);
+  newSiteNameEl.addEventListener('keydown', e => { if (e.key === 'Enter') handleAddSite(); });
+  newSiteCancelBtn.addEventListener('click', () => {
+    hideNewSiteRow();
+    const restoreId = pendingPreviousSiteId || (sitesCache[0] && sitesCache[0].id);
+    pendingPreviousSiteId = null;
+    if (restoreId) {
+      siteSelectEl.value = restoreId;
+      selectSite(restoreId);
+    }
+  });
+
+  removeSiteBtn.addEventListener('click', () => {
+    removeConfirmRow.hidden = false;
+  });
+  removeConfirmNo.addEventListener('click', hideRemoveConfirm);
+  removeConfirmYes.addEventListener('click', () => {
+    if (!currentSiteId) return;
+    delete siteProfiles[currentSiteId];
+    saveSites(currentUsername, siteProfiles);
+    refreshSitesCache();
+    hideRemoveConfirm();
+    currentSiteId = null;
+    currentSiteName = '';
+    renderSiteOptions();
+    if (!currentSiteId) {
+      setPlaceholder('Choose or add a saved site above');
+    }
+  });
+
+  togglePassBtn.addEventListener('click', () => {
+    const showing = passphraseEl.type === 'text';
+    passphraseEl.type = showing ? 'password' : 'text';
+    togglePassBtn.innerHTML = showing ? ICONS.eye : ICONS.eyeOff;
+    togglePassBtn.setAttribute('aria-label', showing ? 'Show passphrase' : 'Hide passphrase');
+    togglePassBtn.setAttribute('aria-pressed', String(!showing));
+  });
+
+  maskBtn.addEventListener('click', () => {
+    masked = !masked;
+    outputEl.classList.toggle('masked', masked);
+    maskBtn.innerHTML = masked ? ICONS.eyeOff : ICONS.eye;
+    maskBtn.setAttribute('aria-label', masked ? 'Show password' : 'Hide password');
+    maskBtn.setAttribute('aria-pressed', String(masked));
+  });
+
+  copyBtn.addEventListener('click', async () => {
+    if (!lastPassword) return;
+    try {
+      await navigator.clipboard.writeText(lastPassword);
+    } catch (err) {
+      const ta = document.createElement('textarea');
+      ta.value = lastPassword;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    copyBtn.innerHTML = '<span>Copied</span>' + ICONS.check;
+    copyBtn.classList.add('copied');
+    setTimeout(() => {
+      copyBtn.innerHTML = '<span>Copy</span>' + ICONS.copy;
+      copyBtn.classList.remove('copied');
+    }, 1400);
+  });
+
+  setAppState('anonymous');
+  syncExcludeVisibility();
+  updateSymbolPreview();
+
+  if (!window.crypto || !window.crypto.subtle) {
+    setPlaceholder('Your browser does not support the Web Crypto API needed here');
+    [passphraseEl, siteEl, versionEl, lengthEl, optUpper, optLower, optDigits, optSymbols, excludeSymbolsEl].forEach(e => e.disabled = true);
+    loginLinkBtn.disabled = true;
+  } else {
+    setPlaceholder('Enter a passphrase above to begin');
+  }
+})();
+</script>
