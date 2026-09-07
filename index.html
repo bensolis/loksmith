@@ -545,8 +545,141 @@
     margin:0;
   }
 
+  .about-faq{
+    margin-top:20px;
+    background:var(--vault);
+    border:1px solid var(--seam);
+    border-radius:16px;
+    padding:6px 34px;
+  }
+  .about-faq summary{
+    cursor:pointer;
+    list-style:none;
+    padding:18px 0;
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--text-muted);
+  }
+  .about-faq summary::-webkit-details-marker{display:none;}
+  .about-faq summary::before{content:"▸ ";color:var(--rust);}
+  .about-faq[open] summary::before{content:"▾ ";}
+
+  .about-faq-body{
+    padding:4px 0 28px;
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+    border-top:1px dashed var(--seam);
+  }
+  .about-faq-body h3{
+    font-family:var(--font-display);
+    font-size:14.5px;
+    font-weight:600;
+    color:var(--rust-bright);
+    margin:20px 0 8px;
+  }
+  .about-faq-body section:first-of-type h3{margin-top:0;}
+  .about-faq-body p{
+    font-size:13px;
+    line-height:1.65;
+    color:var(--text-muted);
+    margin:0 0 10px;
+  }
+  .about-faq-body p:last-child{margin-bottom:0;}
+  .about-faq-body ul{
+    margin:0;
+    padding:0;
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:11px;
+  }
+  .about-faq-body ul li{
+    font-size:13px;
+    line-height:1.65;
+    color:var(--text-muted);
+  }
+  .about-faq-body ul li strong{color:var(--text);}
+
+  .faq-item{
+    border-top:1px dashed var(--seam);
+    padding-top:12px;
+  }
+  .faq-item:first-of-type{border-top:none;padding-top:0;}
+  .faq-item summary{
+    cursor:pointer;
+    list-style:none;
+    position:relative;
+    padding:0 0 4px 16px;
+    font-family:var(--font-body);
+    font-size:13.5px;
+    font-weight:600;
+    letter-spacing:normal;
+    text-transform:none;
+    color:var(--text);
+  }
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::before{
+    content:"▸";
+    position:absolute;
+    left:0;
+    top:0;
+    color:var(--rust);
+  }
+  .faq-item[open] summary::before{content:"▾";}
+  .faq-item p{padding-bottom:10px;}
+
+  .term{
+    position:relative;
+    display:inline-block;
+    border-bottom:1px dotted var(--rust);
+    color:var(--text);
+    cursor:help;
+  }
+  .term-tip{
+    position:absolute;
+    bottom:calc(100% + 9px);
+    left:0;
+    width:220px;
+    max-width:70vw;
+    background:var(--vault-recess);
+    border:1px solid var(--seam);
+    border-radius:8px;
+    padding:10px 12px;
+    font-family:var(--font-body);
+    font-size:12px;
+    font-weight:400;
+    line-height:1.55;
+    color:var(--text-muted);
+    text-transform:none;
+    letter-spacing:normal;
+    box-shadow:0 12px 28px rgba(0,0,0,0.45);
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 0.15s ease;
+    pointer-events:none;
+    z-index:5;
+  }
+  .term-tip::after{
+    content:"";
+    position:absolute;
+    top:100%;
+    left:var(--arrow-offset, 14px);
+    border:6px solid transparent;
+    border-top-color:var(--seam);
+  }
+  .term:hover .term-tip,
+  .term:focus .term-tip,
+  .term:focus-visible .term-tip{
+    opacity:1;
+    visibility:visible;
+  }
+
   @media (max-width:480px){
     .panel-header,.panel-body,.panel-footer{padding-left:22px;padding-right:22px;}
+    .about-faq{padding-left:22px;padding-right:22px;}
     .readout{margin-left:22px;margin-right:22px;}
     .logo-icon{height:36px;}
     .logo-wordmark{height:36px;}
@@ -620,11 +753,11 @@
           <input id="passphrase" type="password" autocomplete="off" spellcheck="false" placeholder="e.g. correct horse battery staple" />
           <button type="button" class="icon-btn" id="togglePass" aria-label="Show passphrase" aria-pressed="false"></button>
         </div>
-        <p class="hint">Typed here only — never transmitted, never stored.</p>
+        <p class="hint">Typed here only. Never transmitted, never stored.</p>
       </div>
 
       <div class="field" id="siteFieldAnon">
-        <label for="site">Site or account <span class="optional">— recommended</span></label>
+        <label for="site">Site or account <span class="optional">(recommended)</span></label>
         <input id="site" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. github.com" />
         <p class="hint">Used as a unique salt, so the same passphrase forges a different password per site.</p>
       </div>
@@ -645,7 +778,7 @@
           <button type="button" class="copy-btn small danger" id="removeConfirmYes"><span>Remove</span></button>
           <button type="button" class="link-btn" id="removeConfirmNo">Cancel</button>
         </div>
-        <p class="hint">Settings below are saved to <strong>this browser only</strong>, under your account — they won't follow you to another device, browser, or profile. Your passphrase is never saved.</p>
+        <p class="hint">Settings below are saved to <strong>this browser only</strong>, under your account. They won't follow you to another device, browser, or profile. Your passphrase is never saved.</p>
       </div>
 
       <details class="advanced">
@@ -677,7 +810,7 @@
       </div>
 
       <div class="field" id="excludeField">
-        <label for="excludeSymbols">Exclude specific symbols <span class="optional">— optional</span></label>
+        <label for="excludeSymbols">Exclude specific symbols <span class="optional">(optional)</span></label>
         <input id="excludeSymbols" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. {};:^" />
         <p class="hint" id="symbolPreview"></p>
       </div>
@@ -700,9 +833,93 @@
     </div>
 
     <div class="panel-footer">
-      <p>Runs entirely in your browser via the Web Crypto API — nothing here is ever transmitted anywhere. Saved site profiles (when signed in) live only in this browser's local storage; your passphrase itself is never saved, even then. If you forget your passphrase, or exactly which site name you used, this password cannot be recreated, so keep a note of your site names somewhere safe.</p>
+      <p>Runs entirely in your browser via the Web Crypto API. Nothing here is ever transmitted anywhere. Saved site profiles (when signed in) live only in this browser's local storage; your passphrase itself is never saved, even then. If you forget your passphrase, or exactly which site name you used, this password cannot be recreated, so keep a note of your site names somewhere safe.</p>
     </div>
   </div>
+
+  <details class="about-faq">
+    <summary>About &amp; FAQ</summary>
+    <div class="about-faq-body">
+
+      <section>
+        <h3>How it works</h3>
+        <p>You type a passphrase and a site name. Your browser runs both through a one-way cryptographic function to forge a password, using the exact same process every time. Because the process is deterministic, the same passphrase and site name always produce the same password. Nothing needs to be remembered, stored, or synced except the passphrase itself.</p>
+      </section>
+
+      <section>
+        <h3>Why use this</h3>
+        <p>There's no database of passwords to store, sync, or ever leak. Since nothing is saved anywhere, there's nothing for an attacker to steal in bulk. It works on any device with a browser, with no account, subscription, or extension required.</p>
+        <p>The trade-off: there's no "forgot password" recovery. If you forget your passphrase, or the exact site name and settings you used, that password cannot be regenerated. This also isn't a full password manager, so it won't autofill forms for you.</p>
+      </section>
+
+      <section>
+        <h3>The technology</h3>
+        <p>Your passphrase is stretched using <span class="term" tabindex="0">PBKDF2-HMAC-SHA256<span class="term-tip">A password-stretching function. It scrambles your passphrase over and over (100,000 times here) to make it far slower for an attacker to guess by brute force.</span></span> with 100,000 iterations, then expanded with <span class="term" tabindex="0">HKDF<span class="term-tip">A technique for stretching one strong secret into as much extra output as needed, without weakening it.</span></span> into a password of any length, with <span class="term" tabindex="0">rejection sampling<span class="term-tip">A method for picking characters fairly at random, so no character is ever more likely to appear than another.</span></span> used to avoid bias in character selection. All of this runs through your browser's native <span class="term" tabindex="0">Web Crypto API<span class="term-tip">The set of secure cryptography tools built into every modern browser, used here instead of loading any outside code.</span></span>. No server is involved at any point.</p>
+      </section>
+
+      <section>
+        <h3>What's stored, where, and why</h3>
+        <ul>
+          <li><strong>Passphrase</strong>: never stored anywhere. It exists only in the input field while you're using it, and is cleared the moment you sign in, sign out, or reload the page.</li>
+          <li><strong>Generated password</strong>: never stored. It's computed fresh each time and shown on screen only.</li>
+          <li><strong>Local account (optional)</strong>: if you create one, your username is stored in plain text in this browser's local storage; your password is stored as a salted cryptographic hash, never in plain text. This feature is for convenience and for shared computers. It exists to help you remember the settings you used, since changing any setting changes your output. It is not for account security. See below.</li>
+          <li><strong>Saved site profiles (optional)</strong>: the site name and your chosen settings (length, character types, exclusions) are stored in this browser's local storage only. Never transmitted anywhere, and never synced between devices.</li>
+          <li><strong>One external request</strong>: this page loads its fonts from Google Fonts each time it's opened, which is the one thing that leaves your browser. No app data is included in that request.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Security awareness</h3>
+        <ul>
+          <li><strong>Keyloggers and compromised devices</strong>: your passphrase is typed into a normal text field. Any keylogger, malicious browser extension, or compromised device that can record your keystrokes can capture it, exactly as with any password typed anywhere. No web app can protect against a device that's already compromised.</li>
+          <li><strong>A weak passphrase weakens everything</strong>: every password this tool generates traces back to one secret passphrase of your choice. A guessable passphrase undermines all of your forged passwords at once. The 100,000 PBKDF2 iterations slow down brute-force attempts, but they can't turn a weak passphrase into a strong one. That part is on you.</li>
+          <li><strong>Shoulder-surfing and clipboard exposure</strong>: the show/hide toggle exists for a reason, so be mindful about revealing your passphrase in public. Once a password is copied, it also sits in your device's clipboard, where other apps or clipboard-history tools may be able to read it. That's the same risk as copying any password from anywhere.</li>
+          <li><strong>The local login is a deterrent, not a lock</strong>: the account check runs entirely in your browser. Anyone with real technical access to this device could bypass it or read the saved site list directly.</li>
+        </ul>
+      </section>
+
+      <section class="faq-list">
+        <h3>Frequently asked questions</h3>
+
+        <details class="faq-item">
+          <summary>What happens if I forget my passphrase?</summary>
+          <p>There's no way to recover it or the passwords it generates. Nothing is stored that could help reconstruct it, since that's a deliberate trade-off for never having anything to steal.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Why does changing the site name change the password?</summary>
+          <p>The site name acts as a <span class="term" tabindex="0">unique salt<span class="term-tip">An extra, unique input mixed in before the cryptographic process runs, so the same passphrase produces a different result for every site.</span></span>, so the same passphrase produces a different password for every site. Capitalization doesn't matter, since it's normalized, but a different name gives you a different password.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Is it a risk that this tool is open source, or that a hacker could see exactly how my password was generated?</summary>
+          <p>No. A well-designed cryptographic system stays secure even when an attacker knows exactly how it works, as long as they don't know your passphrase. Real encryption standards are built this way too: publicly documented, with all the security resting on a secret key rather than a secret method. This app being open source means anyone, you included, can read its actual code and verify nothing is secretly stored or transmitted, rather than taking that on faith. The one thing that would actually put you at risk is someone learning your passphrase itself, not the method used to forge a password from it.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Can I use this on a shared or public computer?</summary>
+          <p>You can, but be aware that anyone with access to the device afterward could read your saved site list from local storage, and the local login won't stop someone with real technical understanding. Avoid saving profiles on a computer you don't trust.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Why can't my saved sites follow me to another device?</summary>
+          <p>Saved profiles live only in this browser's local storage. Nothing is ever sent to a server, so there's nothing to sync. You'd need to recreate your saved sites on each device you use.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>What's "Key version" for?</summary>
+          <p>It lets you generate a new password for the same site without changing your passphrase or the site name. This is useful if a site ever asks you to rotate a password.</p>
+        </details>
+
+        <details class="faq-item">
+          <summary>Does this work offline?</summary>
+          <p>Yes, once the page has loaded. Password generation runs entirely in your browser and needs no network connection.</p>
+        </details>
+
+      </section>
+
+    </div>
+  </details>
 </div>
 
 <script>
@@ -894,7 +1111,7 @@
     const chars = getSymbolChars();
     symbolPreviewEl.textContent = chars.length
       ? ('Active symbols: ' + chars)
-      : 'All symbols excluded — symbols will be skipped';
+      : 'All symbols excluded. Symbols will be skipped.';
   }
 
   function syncExcludeVisibility() {
@@ -906,7 +1123,7 @@
   let lastPassword = '';
   let debounceHandle = null;
 
-  // This string feeds the PBKDF2 salt and HKDF expand context below — once this
+  // This string feeds the PBKDF2 salt and HKDF expand context below. Once this
   // app is actually in use, changing it again would silently change every
   // derived password for the same passphrase + site. Keep it frozen after launch.
   const CRYPTO_DOMAIN = 'loksmith';
@@ -1032,7 +1249,7 @@
     }
     classWarning.hidden = true;
     if (enabledClasses.length === 0) {
-      setPlaceholder('No characters available — adjust your exclusions');
+      setPlaceholder('No characters available. Adjust your exclusions.');
       return;
     }
 
@@ -1047,7 +1264,7 @@
       renderPassword(password, entropyBits);
     } catch (err) {
       if (myGeneration !== generation) return;
-      setPlaceholder('Could not forge a password — try a shorter length');
+      setPlaceholder('Could not forge a password. Try a shorter length.');
     }
   }
 
@@ -1254,7 +1471,7 @@
     confirmPasswordField.hidden = mode !== 'create';
     loginSubmitBtn.querySelector('span').textContent = mode === 'create' ? 'Create account' : 'Sign in';
     loginModeHint.textContent = mode === 'create'
-      ? "Choose a username and password to keep your saved sites separate from anyone else using this browser. This account lives only here — it isn't real account security, so don't reuse a sensitive password."
+      ? "Choose a username and password to keep your saved sites separate from anyone else using this browser. This account lives only here, and it isn't real account security, so don't reuse a sensitive password."
       : 'Sign in to see the site profiles saved to this browser under your username.';
     loginError.hidden = true;
     loginPasswordEl.value = '';
@@ -1409,6 +1626,30 @@
       copyBtn.innerHTML = '<span>Copy</span>' + ICONS.copy;
       copyBtn.classList.remove('copied');
     }, 1400);
+  });
+
+  document.querySelectorAll('.term').forEach(term => {
+    const tip = term.querySelector('.term-tip');
+    if (!tip) return;
+    function positionTip() {
+      const margin = 10;
+      tip.style.left = '0px';
+      tip.style.removeProperty('--arrow-offset');
+      const termRect = term.getBoundingClientRect();
+      const tipRect = tip.getBoundingClientRect();
+      let shift = 0;
+      const overflowRight = tipRect.right - (window.innerWidth - margin);
+      if (overflowRight > 0) shift -= overflowRight;
+      const overflowLeft = (tipRect.left + shift) - margin;
+      if (overflowLeft < 0) shift -= overflowLeft;
+      tip.style.left = shift + 'px';
+      const tipLeftInViewport = tipRect.left + shift;
+      const arrowCenter = (termRect.left + termRect.width / 2) - tipLeftInViewport;
+      const clampedArrow = Math.max(12, Math.min(tipRect.width - 12, arrowCenter));
+      tip.style.setProperty('--arrow-offset', clampedArrow + 'px');
+    }
+    term.addEventListener('mouseenter', positionTip);
+    term.addEventListener('focus', positionTip);
   });
 
   setAppState('anonymous');
