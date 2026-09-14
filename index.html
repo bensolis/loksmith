@@ -222,11 +222,22 @@
     justify-content:space-between;
     align-items:baseline;
   }
-  .length-row output{
+  #lengthValue{
+    width:64px;
+    background:transparent;
+    border:none;
+    padding:0 2px 0 0;
     font-family:var(--font-mono);
     font-size:15px;
     color:var(--rust-bright);
     font-variant-numeric:tabular-nums;
+    text-align:right;
+    outline:none;
+  }
+  #lengthValue:focus-visible{
+    outline:2px solid var(--rust);
+    outline-offset:3px;
+    border-radius:4px;
   }
 
   input[type="range"]{
@@ -793,7 +804,7 @@
       <div class="field">
         <div class="length-row">
           <label for="length">Length</label>
-          <output id="lengthValue" for="length">20</output>
+          <input type="number" id="lengthValue" min="8" max="64" step="1" value="20" inputmode="numeric" aria-label="Length in characters, 8 to 64" />
         </div>
         <input id="length" type="range" min="8" max="64" value="20" />
       </div>
@@ -1295,8 +1306,32 @@
   }
 
   lengthEl.addEventListener('input', () => {
-    lengthValueEl.textContent = lengthEl.value;
+    lengthValueEl.value = lengthEl.value;
     scheduleRegenerate();
+  });
+
+  function clampLength(n) {
+    return Math.min(64, Math.max(8, n));
+  }
+
+  lengthValueEl.addEventListener('input', () => {
+    const parsed = parseInt(lengthValueEl.value, 10);
+    if (Number.isFinite(parsed) && parsed >= 8 && parsed <= 64) {
+      lengthEl.value = parsed;
+      scheduleRegenerate();
+    }
+  });
+
+  lengthValueEl.addEventListener('blur', () => {
+    const parsed = parseInt(lengthValueEl.value, 10);
+    const clamped = Number.isFinite(parsed) ? clampLength(parsed) : parseInt(lengthEl.value, 10);
+    lengthValueEl.value = clamped;
+    lengthEl.value = clamped;
+    scheduleRegenerate();
+  });
+
+  lengthValueEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter') lengthValueEl.blur();
   });
 
   [passphraseEl, siteEl, versionEl].forEach(input => {
@@ -1387,7 +1422,7 @@
     currentSiteName = data.name || id;
     removeSiteBtn.hidden = false;
     lengthEl.value = data.length || 20;
-    lengthValueEl.textContent = lengthEl.value;
+    lengthValueEl.value = lengthEl.value;
     optUpper.checked = data.upper !== false;
     optLower.checked = data.lower !== false;
     optDigits.checked = data.digits !== false;
@@ -1429,7 +1464,7 @@
 
     removeSiteBtn.hidden = false;
     lengthEl.value = 20;
-    lengthValueEl.textContent = '20';
+    lengthValueEl.value = '20';
     optUpper.checked = optLower.checked = optDigits.checked = optSymbols.checked = true;
     excludeSymbolsEl.value = '';
     versionEl.value = 1;
